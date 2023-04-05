@@ -9,7 +9,9 @@
       name: 
         - htop
         - tmux
-        - vim-nox
+        - curl
+        - git
+        - zsh
 
   - name: copy wallpaper file
     copy:
@@ -29,3 +31,15 @@
     dconf:
       key: "/org/gnome/desktop/background/picture-options"
       value: "'zoom'"
+
+  - name: Download and install Oh My Zsh
+    shell: >
+      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    args:
+      executable: /bin/bash
+
+  - name: Set zsh as default shell for user
+    user:
+      name: felix
+      shell: /bin/zsh
+  - 
