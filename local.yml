@@ -3,43 +3,25 @@
   connection: local
   become: true
 
-  tasks:
-  - name: install packages
-    package:
-      name: 
-        - htop
-        - tmux
+vars:
+  user_name: felix
+
+tasks:
+  - name: Install dependencies for Oh My Zsh
+    apt:
+      name:
         - curl
         - git
-        - zsh
+      state: present
 
-  - name: copy wallpaper file
-    copy:
-      src: files/wallpaper.png
-      dest: /usr/share/backgrounds/ansible-wallpaper.png
-      owner: root
-      group: root
-  
-  - name: set wallpaper
-    become_user: felix
-    dconf:
-      key: "/org/gnome/desktop/background/picture-uri"
-      value: "'file:///usr/share/backgrounds/ansible-wallpaper.png'"
-  
-  - name: set wallpaper position
-    become_user: felix
-    dconf:
-      key: "/org/gnome/desktop/background/picture-options"
-      value: "'zoom'"
-
-  - name: Download and install Oh My Zsh
-    shell: >
+  - name: Install Oh My Zsh
+    shell: |
       sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     args:
       executable: /bin/bash
+    become_user: "{{ user_name }}"
 
-  - name: Set zsh as default shell for user
+  - name: Set Zsh as default shell for user
     user:
-      name: felix
+      name: "{{ user_name }}"
       shell: /bin/zsh
-  - 
