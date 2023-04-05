@@ -3,8 +3,8 @@
   connection: local
   become: true
 
-vars:
-  - user_name: felix
+- vars:
+  user_name: felix
 
 tasks:
   - name: Install dependencies for Oh My Zsh
