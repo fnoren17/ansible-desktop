@@ -20,11 +20,17 @@
       owner: root
       group: root
   
-  - name: set wallpaper
-    become_user: felix
-    dconf:
-      key: "/org/gnome/desktop/background/picture-uri"
-      value: "'file:///usr/share/backgrounds/ansible-wallpaper.png'"
+  - name: Install dependencies for setting wallpaper
+      apt:
+        name:
+          - gsettings
+          - gnome-backgrounds
+        state: present
+
+    - name: Set wallpaper
+      command: >
+        gsettings set org.gnome.desktop.background picture-uri "file:///usr/share/backgrounds/ansible-wallpaper.png"
+      become_user: felix
   
   - name: set wallpaper position
     become_user: felix
