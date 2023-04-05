@@ -12,8 +12,6 @@
         - curl
         - git
         - zsh
-        - gsettings
-        - gnome-backgrounds
 
   - name: copy wallpaper file
     copy:
