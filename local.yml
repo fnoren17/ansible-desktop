@@ -12,6 +12,8 @@
         - curl
         - git
         - zsh
+        - gsettings
+        - gnome-backgrounds
 
   - name: copy wallpaper file
     copy:
@@ -19,13 +21,6 @@
       dest: /usr/share/backgrounds/ansible-wallpaper.png
       owner: root
       group: root
-  
-  - name: Install dependencies for setting wallpaper
-      apt:
-        name:
-          - gsettings
-          - gnome-backgrounds
-        state: present
 
     - name: Set wallpaper
       command: >
