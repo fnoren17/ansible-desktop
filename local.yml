@@ -22,10 +22,10 @@
       owner: root
       group: root
 
-    - name: Set wallpaper
-      command: >
-        gsettings set org.gnome.desktop.background picture-uri "file:///usr/share/backgrounds/ansible-wallpaper.png"
-      become_user: felix
+  - name: Set wallpaper
+    command: >
+      gsettings set org.gnome.desktop.background picture-uri "file:///usr/share/backgrounds/ansible-wallpaper.png"
+    become_user: felix
   
   - name: set wallpaper position
     become_user: felix
