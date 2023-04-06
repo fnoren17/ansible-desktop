@@ -1,80 +1,56 @@
----
-- hosts: localhost
+- name: Configure localhost
+  hosts: localhost
   connection: local
   become: true
+
   vars:
     user_name: felix
+    wallpaper_path: /usr/share/backgrounds/wallpaper.png
     extensions:
       - vscodium.vscodium
+      - zhuangtongfa.material-theme
       - eamodio.gitlens
-      - dsznajder.es7-react-js-snippets 
+      - dsznajder.es7-react-js-snippets
 
   tasks:
-  - name: install packages
-    package:
-      name: 
-        - htop
-        - tmux
-        - curl
-        - git
-        - zsh
+    - name: Install Oh My Zsh!
+      shell: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" ""
+      become_user: "{{ user_name }}"
 
-  - name: copy wallpaper file
-    copy:
-      src: files/wallpaper.png
-      dest: /usr/share/backgrounds/ansible-wallpaper.png
-      owner: root
-      group: root
+    - name: Clone spaceship-prompt theme repository
+      git:
+        repo: "https://github.com/denysdovhan/spaceship-prompt.git"
+        dest: "/home/{{ user_name }}/.oh-my-zsh/custom/themes/spaceship-prompt"
+        clone: yes
+        force: yes
+      become_user: "{{ user_name }}"
 
-  - name: Set wallpaper
-    command: >
-      gsettings set org.gnome.desktop.background picture-uri "file:///usr/share/backgrounds/ansible-wallpaper.png"
-    become_user: felix
-  
-  - name: set wallpaper position
-    become_user: felix
-    dconf:
-      key: "/org/gnome/desktop/background/picture-options"
-      value: "'zoom'"
+    - name: Set spaceship-prompt theme as default
+      lineinfile:
+        path: "/home/{{ user_name }}/.zshrc"
+        regexp: "^ZSH_THEME=.*"
+        line: "ZSH_THEME=\"spaceship-prompt/spaceship\""
+      become_user: "{{ user_name }}"
+      backup: yes
 
-  - name: Download and install Oh My Zsh
-    shell: >
-      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    args:
-      executable: /bin/bash
-    become_user: felix
+    - name: Set desktop wallpaper
+      gsettings:
+        key: org.gnome.desktop.background picture-uri
+        value: "file://{{ wallpaper_path }}"
 
-  - name: Set zsh as default shell for user
-    user:
-      name: felix
-      shell: /bin/zsh
-  - name: Clone spaceship-prompt theme repository
-    git:
-      repo: "https://github.com/denysdovhan/spaceship-prompt.git"
-      dest: "/home/{{ user_name }}/.oh-my-zsh/custom/themes/spaceship-prompt"
-      clone: yes
-      force: yes
-    become_user: "{{ user_name }}"
+    - name: Download and install VSCodium and extensions
+      apt_repository:
+        repo: deb [trusted=yes] https://apt.vscodium.com/ stable main
+        state: present
 
-  - name: Set spaceship-prompt theme as default
-    lineinfile:
-      path: "/home/{{ user_name }}/.zshrc"
-      regexp: "^ZSH_THEME=.*"
-      line: "ZSH_THEME=\"spaceship-prompt/spaceship\""
-    become_user: "{{ user_name }}"
-    backup: yes
-  - name: Add VSCodium repository
-    apt_repository:
-      repo: deb [trusted=yes] https://apt.vscodium.com/ stable main
-      state: present
+      apt:
+        name:
+          - codium
+          - fonts-firacode
+        state: present
 
-  - name: Install VSCodium
-    apt:
-      name: codium
-      state: present
-
-  - name: Install VSCodium extensions
-    command: >
-      codium --install-extension {{ item }}
-    become_user: "{{ user_name }}"
-    loop: "{{ extensions }}"
+    - name: Install VSCodium extensions
+      command: >
+        codium --install-extension {{ item }}
+      become_user: "{{ user_name }}"
+      loop: "{{ extensions }}"
