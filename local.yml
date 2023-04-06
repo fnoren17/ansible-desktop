@@ -33,10 +33,10 @@
         backup: yes
       become_user: "{{ user_name }}"
 
-    - name: Set desktop wallpaper
-      gsettings:
-        key: org.gnome.desktop.background picture-uri
-        value: "file://{{ wallpaper_path }}"
+    - name: Set wallpaper
+      command: >
+        gsettings set org.gnome.desktop.background picture-uri "file://{{ wallpaper_path }}"
+      become_user: "{{ user_name }}"
 
     - name: Download and install VSCodium and extensions
       apt_repository:
