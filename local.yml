@@ -38,15 +38,16 @@
         gsettings set org.gnome.desktop.background picture-uri "file://{{ wallpaper_path }}"
       become_user: "{{ user_name }}"
 
-    - name: Install VSCodium and extensions
+    - name: Add VSCodium repo
       apt_repository:
         repo: deb [trusted=yes] https://apt.vscodium.com/ stable main
         update_cache: yes
-      apt:
-        name:
-          - codium
-          - fonts-firacode
-        state: present
+  - name: Install VSCodium
+    apt:
+      name:
+        - codium
+        - fonts-firacode
+      state: present
 
     - name: Install VSCodium extensions
       command: >
