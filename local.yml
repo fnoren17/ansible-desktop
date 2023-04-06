@@ -30,8 +30,8 @@
         path: "/home/{{ user_name }}/.zshrc"
         regexp: "^ZSH_THEME=.*"
         line: "ZSH_THEME=\"spaceship-prompt/spaceship\""
+        backup: yes
       become_user: "{{ user_name }}"
-      backup: yes
 
     - name: Set desktop wallpaper
       gsettings:
