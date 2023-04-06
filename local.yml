@@ -49,12 +49,12 @@
       name: felix
       shell: /bin/zsh
   - name: Clone spaceship-prompt theme repository
-      git:
-        repo: "https://github.com/denysdovhan/spaceship-prompt.git"
-        dest: "/home/{{ user_name }}/.oh-my-zsh/custom/themes/spaceship-prompt"
-        clone: yes
-        force: yes
-      become_user: "{{ user_name }}"
+    git:
+      repo: "https://github.com/denysdovhan/spaceship-prompt.git"
+      dest: "/home/{{ user_name }}/.oh-my-zsh/custom/themes/spaceship-prompt"
+      clone: yes
+      force: yes
+    become_user: "{{ user_name }}"
 
   - name: Set spaceship-prompt theme as default
     lineinfile:
@@ -64,9 +64,9 @@
     become_user: "{{ user_name }}"
     backup: yes
   - name: Add VSCodium repository
-      apt_repository:
-        repo: deb [trusted=yes] https://apt.vscodium.com/ stable main
-        state: present
+    apt_repository:
+      repo: deb [trusted=yes] https://apt.vscodium.com/ stable main
+      state: present
 
   - name: Install VSCodium
     apt:
