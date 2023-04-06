@@ -42,12 +42,12 @@
       apt_repository:
         repo: deb [trusted=yes] https://apt.vscodium.com/ stable main
         update_cache: yes
-  - name: Install VSCodium
-    apt:
-      name:
-        - codium
-        - fonts-firacode
-      state: present
+    - name: Install VSCodium
+      apt:
+        name:
+          - codium
+          - fonts-firacode
+        state: present
 
     - name: Install VSCodium extensions
       command: >
