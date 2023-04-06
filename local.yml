@@ -2,6 +2,12 @@
 - hosts: localhost
   connection: local
   become: true
+  vars:
+    user_name: felix
+    extensions:
+      - vscodium.vscodium
+      - eamodio.gitlens
+      - dsznajder.es7-react-js-snippets 
 
   tasks:
   - name: install packages
@@ -42,4 +48,33 @@
     user:
       name: felix
       shell: /bin/zsh
-  - 
+  - name: Clone spaceship-prompt theme repository
+      git:
+        repo: "https://github.com/denysdovhan/spaceship-prompt.git"
+        dest: "/home/{{ user_name }}/.oh-my-zsh/custom/themes/spaceship-prompt"
+        clone: yes
+        force: yes
+      become_user: "{{ user_name }}"
+
+  - name: Set spaceship-prompt theme as default
+    lineinfile:
+      path: "/home/{{ user_name }}/.zshrc"
+      regexp: "^ZSH_THEME=.*"
+      line: "ZSH_THEME=\"spaceship-prompt/spaceship\""
+    become_user: "{{ user_name }}"
+    backup: yes
+  - name: Add VSCodium repository
+      apt_repository:
+        repo: deb [trusted=yes] https://apt.vscodium.com/ stable main
+        state: present
+
+  - name: Install VSCodium
+    apt:
+      name: codium
+      state: present
+
+  - name: Install VSCodium extensions
+    command: >
+      codium --install-extension {{ item }}
+    become_user: "{{ user_name }}"
+    loop: "{{ extensions }}"
