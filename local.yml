@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: local
   become: true
   vars:
     user_name: felix
