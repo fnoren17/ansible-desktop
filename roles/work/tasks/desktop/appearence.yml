@@ -1,0 +1,13 @@
+- name: Copy wallpaper
+  ansible.builtin.copy:
+    src: wallpaper.png
+    dest: /home/felix/Pictures/wallpaper.png
+    owner: felix
+    group: felix
+    mode: 0644
+
+- name: Set wallpaper
+  become_user: felix
+  community.general.dconf:
+    key: "/org/gnome/desktop/background/picture-uri"
+    value: "'file:///home/felix/Pictures/wallpaper.png'"

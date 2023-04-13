@@ -1,0 +1,99 @@
+- name: Configure Work Station
+  hosts: all
+  become: true
+  vars:
+    user_name: felix
+    extensions:
+      - pkief.material-icon-theme
+      - eamodio.gitlens
+      - dbaeumer.vscode-eslint
+    zsh_custom: /home/{{ user_name }}/.oh-my-zsh/custom
+  roles:
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ user_name }}"
+          oh_my_zsh:
+            theme: spaceship
+            plugins:
+              - git
+              - zsh-syntax-highlighting
+              - zsh-autosuggestions
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install dependencies
+      ansible.builtin.apt:
+        name:
+          - curl
+          - git
+          - libx11-xcb-dev
+          - libasound2
+          - libatk1.0-0
+          - libcairo2
+          - libcups2
+          - libexpat1
+          - libfontconfig1
+          - libfreetype6
+          - libgcc-s1
+          - libglib2.0-0
+          - libgtk-3-0
+          - libnspr4
+          - libnss3
+          - libpango-1.0-0
+          - libx11-xcb1
+          - libxcb-dri3-0
+          - libxcb1
+          - libxcomposite1
+          - libxcursor1
+          - libxdamage1
+          - libxext6
+          - libxfixes3
+          - libxi6
+          - libxrandr2
+          - libxrender1
+          - libxtst6
+          - wget
+          - zsh
+        state: present
+
+    - name: Add VSCodium GPG key
+      ansible.builtin.apt_key:
+        url: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
+        state: present
+
+    - name: Add VSCodium repository
+      ansible.builtin.apt_repository:
+        repo: deb [trusted=yes] https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/debs/ vscodium main
+        state: present
+
+    - name: Install VSCodium
+      ansible.builtin.apt:
+        name: codium
+        state: present
+
+    - name: Install VSCodium extensions
+      ansible.builtin.command: >
+        codium --install-extension {{ item }}
+      args:
+        creates: "/home/{{ user_name }}/.vscode/extensions/{{ item }}"
+      loop: "{{ extensions }}"
+      become_user: "{{ user_name }}"
+
+    - name: Clone spaceship theme # noqa: latest
+      ansible.builtin.git:
+        repo: https://github.com/spaceship-prompt/spaceship-prompt.git
+        dest: "{{ zsh_custom }}/themes/spaceship-prompt"
+
+    - name: Clone zsh-syntax-highlight # noqa: latest
+      ansible.builtin.git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+        dest: "{{ zsh_custom }}/plugins/zsh-syntax-highlighting"
+
+
+    - name: Create symbolic link
+      ansible.builtin.file:
+        src: "{{ zsh_custom }}/themes/spaceship-prompt/spaceship.zsh-theme"
+        dest: "{{ zsh_custom }}/themes/spaceship.zsh-theme"
+        state: link

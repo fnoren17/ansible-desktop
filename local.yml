@@ -1,56 +1,22 @@
-- name: Configure localhost
-  hosts: localhost
-  connection: local
+---
+- hosts: all
   become: true
-
   vars:
     user_name: felix
-    wallpaper_path: /usr/share/backgrounds/wallpaper.png
+    zsh_custom: /home/{{ user_name }}/.oh-my-zsh/custom
     extensions:
-      - vscodium.vscodium
-      - zhuangtongfa.material-theme
+      - pkief.material-icon-theme
       - eamodio.gitlens
-      - dsznajder.es7-react-js-snippets
-
-  tasks:
-    - name: Install Oh My Zsh!
-      shell: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" ""
-      become_user: "{{ user_name }}"
-
-    - name: Clone spaceship-prompt theme repository
-      git:
-        repo: "https://github.com/denysdovhan/spaceship-prompt.git"
-        dest: "/home/{{ user_name }}/.oh-my-zsh/custom/themes/spaceship-prompt"
-        clone: yes
-        force: yes
-      become_user: "{{ user_name }}"
-
-    - name: Set spaceship-prompt theme as default
-      lineinfile:
-        path: "/home/{{ user_name }}/.zshrc"
-        regexp: "^ZSH_THEME=.*"
-        line: "ZSH_THEME=\"spaceship-prompt/spaceship\""
-        backup: yes
-      become_user: "{{ user_name }}"
-
-    - name: Set wallpaper
-      command: >
-        gsettings set org.gnome.desktop.background picture-uri "file://{{ wallpaper_path }}"
-      become_user: "{{ user_name }}"
-
-    - name: Add VSCodium repo
-      apt_repository:
-        repo: deb [trusted=yes] https://apt.vscodium.com/ stable main
-        update_cache: yes
-    - name: Install VSCodium
-      apt:
-        name:
-          - codium
-          - fonts-firacode
-        state: present
-
-    - name: Install VSCodium extensions
-      command: >
-        codium --install-extension {{ item }}
-      become_user: "{{ user_name }}"
-      loop: "{{ extensions }}"
+      - dbaeumer.vscode-eslint
+  roles:
+    - role: base
+    - role: work
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ user_name }}"
+          oh_my_zsh:
+            theme: spaceship
+            plugins:
+              - git
+              - zsh-syntax-highlighting
+              - zsh-autosuggestions

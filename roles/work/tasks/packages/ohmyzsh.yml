@@ -1,0 +1,20 @@
+- name: Clone spaceship theme # noqa: latest
+  ansible.builtin.git:
+    repo: https://github.com/spaceship-prompt/spaceship-prompt.git
+    dest: "{{ zsh_custom }}/themes/spaceship-prompt"
+
+- name: Create symbolic link
+  ansible.builtin.file:
+    src: "{{ zsh_custom }}/themes/spaceship-prompt/spaceship.zsh-theme"
+    dest: "{{ zsh_custom }}/themes/spaceship.zsh-theme"
+    state: link
+
+- name: Clone zsh-syntax-highlight # noqa: latest
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: "{{ zsh_custom }}/plugins/zsh-syntax-highlighting"
+
+- name: Clone zsh-autosuggestions # noqa: latest
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
+    dest: "{{ zsh_custom }}/plugins/zsh-autosuggestions"

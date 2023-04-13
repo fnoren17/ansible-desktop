@@ -1,0 +1,22 @@
+- name: Add VSCodium GPG key
+  ansible.builtin.apt_key:
+    url: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
+    state: present
+
+- name: Add VSCodium repository
+  ansible.builtin.apt_repository:
+    repo: deb [trusted=yes] https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/debs/ vscodium main
+    state: present
+
+- name: Install VSCodium
+  ansible.builtin.apt:
+    name: codium
+    state: present
+
+- name: Install VSCodium extensions
+  ansible.builtin.command: >
+    codium --install-extension {{ item }}
+  args:
+    creates: "/home/{{ user_name }}/.vscode/extensions/{{ item }}"
+  loop: "{{ extensions }}"
+  become_user: "{{ user_name }}"

@@ -1,0 +1,6 @@
+user_name: felix
+zsh_custom: /home/{{ user_name }}/.oh-my-zsh/custom
+extensions:
+  - pkief.material-icon-theme
+  - eamodio.gitlens
+  - dbaeumer.vscode-eslint
