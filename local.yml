@@ -1,6 +1,8 @@
 ---
-- hosts: local
+- name: Setup workstation
+  hosts: all
   become: true
+  remote_user: felix
   vars:
     user_name: felix
     zsh_custom: /home/{{ user_name }}/.oh-my-zsh/custom
@@ -8,9 +10,13 @@
       - pkief.material-icon-theme
       - eamodio.gitlens
       - dbaeumer.vscode-eslint
+  tasks:
+    - name: change user shell to zsh 
+      become: yes
+      ansible.builtin.user:
+        name: "felix"
+        shell: /bin/zsh
   roles:
-    - role: base
-    - role: work
     - role: gantsign.oh-my-zsh
       users:
         - username: "{{ user_name }}"
@@ -20,3 +26,6 @@
               - git
               - zsh-syntax-highlighting
               - zsh-autosuggestions
+    - role: base
+    - role: work
+

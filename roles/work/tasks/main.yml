@@ -1,7 +1,8 @@
-- include_vars: "{{ ansible_distribution }}.yml"
+- ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
   tags: always
 
 - block:
-    - include_tasks: packages/ohmyzsh.yml
-    - include_tasks: software/codium.yml
-    - include_tasks: desktop/appearence.yml
+    - ansible.builtin.include_tasks: packages/ohmyzsh.yml
+    - ansible.builtin.include_tasks: packages/asdf.yml
+    - ansible.builtin.include_tasks: software/codium.yml
+    - ansible.builtin.include_tasks: desktop/appearence.yml

@@ -1,13 +1,28 @@
 - name: Copy wallpaper
   ansible.builtin.copy:
     src: wallpaper.png
-    dest: /home/felix/Pictures/wallpaper.png
-    owner: felix
-    group: felix
+    dest: /usr/share/backgrounds/wallpaper.png
+    owner: root
+    group: root
     mode: 0644
 
+- name: Get Sweet Dark Theme
+  ansible.builtin.unarchive:
+    src: https://github.com/EliverLara/Sweet/releases/download/v3.0/Sweet-Dark.zip
+    dest: /usr/share/themes
+    remote_src: true
+
+- name: Get Candy Icons theme
+  ansible.builtin.git:
+    repo: https://github.com/EliverLara/candy-icons.git
+    dest: '/usr/share/icons/candy-icons'
+    update: false
+
 - name: Set wallpaper
-  become_user: felix
-  community.general.dconf:
-    key: "/org/gnome/desktop/background/picture-uri"
-    value: "'file:///home/felix/Pictures/wallpaper.png'"
+  gsetting:
+    user: felix
+    settings:
+      org.gnome.desktop.background.picture-uri: "'file:///usr/share/backgrounds/wallpaper.png'"
+      org.gnome.desktop.interface.gtk-theme: 'Sweet-Dark'
+      org.gnome.desktop.wm.preferences.theme: 'Sweet-Dark'
+      org.gnome.desktop.interface.icon-theme: 'candy-icons'

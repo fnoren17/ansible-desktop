@@ -41,3 +41,10 @@
       - python3-psutil
       - python3-dbus
     state: present
+
+- name: change user shell to zsh 
+  become: true
+  user:
+    name: felix
+    shell: /bin/zsh
+

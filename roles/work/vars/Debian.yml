@@ -1,6 +1,14 @@
 user_name: felix
+home_directory: /home/{{ user_name }}
 zsh_custom: /home/{{ user_name }}/.oh-my-zsh/custom
 extensions:
   - pkief.material-icon-theme
   - eamodio.gitlens
   - dbaeumer.vscode-eslint
+asdf_plugins:
+  - name: nodejs
+    version: lts
+  - name: ruby
+    version: "3.2.2"
+  - name: php
+    version: "8.2.5"

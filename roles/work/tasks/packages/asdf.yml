@@ -1,0 +1,59 @@
+- name: Copy zshenv
+  become_user: felix
+  ansible.builtin.copy:
+    src: .zshenv
+    dest: ~/.zshenv
+
+- name: Download asdf
+  become_user: felix
+  ansible.builtin.git:
+    repo: https://github.com/asdf-vm/asdf.git
+    dest: ~/.asdf
+    version: v0.11.3
+- name: Install asdf
+  become_user: felix
+  ansible.builtin.blockinfile:
+    path: ~/.zshrc
+    block: |
+      . $HOME/.asdf/asdf.sh
+      . $HOME/.asdf/completions/asdf.bash
+- name: Install asdf Ruby dependencies
+  ansible.builtin.apt:
+    name:
+      - autoconf
+      - bison
+      - patch
+      - build-essential
+      - rustc
+      - libssl-dev
+      - libyaml-dev
+      - libreadline6-dev
+      - zlib1g-dev
+      - libgmp-dev
+      - libncurses5-dev
+      - libffi-dev
+      - libgdbm6
+      - libgdbm-dev
+      - libdb-dev
+      - uuid-dev
+- name: Add asdf Ruby plugin
+  become_user: felix
+  ansible.builtin.shell: >
+      . {{ home_directory }}/.asdf/asdf.sh && asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git 
+  args:
+    executable: /bin/zsh
+  ignore_errors: true
+
+- name: Install Ruby 3.2.2
+  become_user: felix
+  ansible.builtin.shell: >
+      . {{ home_directory }}/.asdf/asdf.sh && asdf install ruby 3.2.2
+  args:
+    executable: /bin/zsh
+
+- name: Activate Ruby 3.2.2
+  become_user: felix
+  ansible.builtin.shell: >
+    . {{ home_directory }}/.asdf/asdf.sh && asdf global ruby 3.2.2
+  args:
+    executable: /bin/zsh
